@@ -19,4 +19,22 @@ contract event_tickets is ERC20, Ownable {
         require(balanceOf(msg.sender) >= amount, "user have Not enough points to redeem");
         _burn(msg.sender, amount);
     }
+
+    function transfer(address to, uint256 amount) public virtual override returns (bool) {//this function is basically to transfer to which account directly
+        _transfer(_msgSender(), to, amount);
+        return true;
+    }
+
+    function transferFrom(address sender, address recipient, uint256 amount) public virtual override returns (bool) {
+        //this account will ask user to prompt the user to add input
+        _transfer(sender, recipient, amount);
+        _approve(sender, _msgSender(), allowance(sender, _msgSender()) - amount);
+        return true;
+    }
+
+    function approve(address spender, uint256 amount) public virtual override returns (bool) {
+        //to approve all the transactions
+        _approve(_msgSender(), spender, amount);
+        return true;
+    }
 }
