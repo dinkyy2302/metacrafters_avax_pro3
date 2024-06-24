@@ -40,6 +40,11 @@ A Solidity smart contract is used to implement "Event tickets" (ETK), an ERC20 t
 
 **Access**: Any account can call this function to redeem their tokens, provided they have enough tokens in their balance.
 
+**Transfer Tokens**: To transfer tokens to a different address, use the `transfer(address to, uint256 amount)} function.
+
+**Approve Token Spending**: - To authorize another address to spend tokens on your behalf, use {approve(address spender, uint256 amount)}.
+  - After that, transfer tokens from the authorized address using `transferFrom(address sender, address recipient, uint256 amount)}.
+
 ## Usage
 
 ### Interacting with the Contract
@@ -73,7 +78,33 @@ A Solidity smart contract is used to implement "Event tickets" (ETK), an ERC20 t
        require(balanceOf(msg.sender) >= amount, "user have Not enough points to redeem");
        _burn(msg.sender, amount);
    }
-   ```
+
+   
+5.  **Transfer Tokens**:
+         function transfer(address to, uint256 amount) public virtual override returns (bool) {
+    //this function is basically to transfer to which account directly
+        _transfer(_msgSender(), to, amount);
+        return true;
+    }
+
+6. **Approve Token Spending**:
+  - Use `approve(address spender, uint256 amount)` to approve another address to spend tokens on your behalf.
+  - Then, use `transferFrom(address sender, address recipient, uint256 amount)` to transfer tokens from the approved address.
+    
+    function transferFrom(address sender, address recipient, uint256 amount) public virtual override returns (bool) {
+        //this account will ask user to prompt the user to add input
+        _transfer(sender, recipient, amount);
+        _approve(sender, _msgSender(), allowance(sender, _msgSender()) - amount);
+        return true;
+    }
+
+    function approve(address spender, uint256 amount) public virtual override returns (bool) {
+        //to approve all the transactions
+        _approve(_msgSender(), spender, amount);
+        return true;
+    }
+}
+
 
 ## Error Handling
 
